@@ -21,9 +21,11 @@ class ConfigError(Exception):
 @dataclass
 class ApiConfig:
     """API configuration."""
-    polymarket_rest_url: str = "https://clob.polymarket.com"
-    polymarket_ws_url: str = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
-    gamma_api_url: str = "https://gamma-api.polymarket.com"
+
+    polymarket_api_variant: str = "us"  # "us" or "international"
+    polymarket_rest_url: str = "https://api.polymarket.us"
+    polymarket_ws_url: str = "wss://ws-subscriptions.polymarket.us/ws/market"
+    gamma_api_url: str = ""  # International-only market discovery API
     kalshi_api_url: str = "https://api.elections.kalshi.com/trade-api/v2"
     api_key: str = ""
     api_secret: str = ""
@@ -235,6 +237,11 @@ def _validate_config(config: BotConfig) -> None:
     # Mode validation
     if config.mode.trading_mode.lower() not in ("live", "dry_run"):
         errors.append("mode.trading_mode must be 'live' or 'dry_run'")
+
+    if config.api.polymarket_api_variant.lower() not in ("us", "international"):
+    errors.append("api.polymarket_api_variant must be 'us' or 'international'")    
+
+
     
     # Live mode checks
     if config.is_live:
@@ -247,17 +254,30 @@ def _validate_config(config: BotConfig) -> None:
         raise ConfigError("Configuration validation failed:\n" + "\n".join(f"  - {e}" for e in errors))
 
 
-def save_config(config: BotConfig, config_path: str = "config.yaml") -> None:
-    """Save configuration to a YAML file."""
+def save_config(
+    config: BotConfig,
+    config_path: str = "config.yaml",
+    include_secrets: bool = False,
+) -> None:
+    """Save configuration to a YAML file.
+
+    By default, secret fields are redacted to avoid accidentally persisting
+    API keys/private keys loaded from environment variables.
+    """
     import dataclasses
-    
+
     def to_dict(obj):
         if dataclasses.is_dataclass(obj):
             return {k: to_dict(v) for k, v in dataclasses.asdict(obj).items()}
         return obj
-    
+
     data = to_dict(config)
-    
+
+    if not include_secrets and "api" in data:
+        for key in ("api_key", "api_secret", "passphrase", "private_key"):
+            if key in data["api"] and data["api"][key]:
+                data["api"][key] = "REDACTED"
+
     with open(config_path, "w") as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
