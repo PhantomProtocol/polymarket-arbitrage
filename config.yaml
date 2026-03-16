@@ -2,10 +2,11 @@
 # ========================================
 
 api:
-  # Polymarket API endpoints
-  polymarket_rest_url: "https://clob.polymarket.com"
-  polymarket_ws_url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
-  gamma_api_url: "https://gamma-api.polymarket.com"
+  # Polymarket API endpoints (US retail by default)
+  polymarket_api_variant: "us"   # "us" (docs.polymarket.us) or "international"
+  polymarket_rest_url: "https://api.polymarket.us"
+  polymarket_ws_url: "wss://ws-subscriptions.polymarket.us/ws/market"
+  gamma_api_url: ""  # Set only for international mode
   
   # Kalshi API endpoint (public, no auth needed for market data)
   kalshi_api_url: "https://api.elections.kalshi.com/trade-api/v2"
