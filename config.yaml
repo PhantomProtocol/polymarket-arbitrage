@@ -12,8 +12,8 @@ api:
   kalshi_api_url: "https://api.elections.kalshi.com/trade-api/v2"
   
   # Authentication (replace with your credentials)
-  api_key: "YOUR_API_KEY_HERE"
-  api_secret: "YOUR_API_SECRET_HERE"
+  api_key: "1ec4ad0e-fc74-45f0-a5c9-393b1dd8ed34"
+  api_secret: "HaT98aA4vQAOodwDN75ch+qmhAn3Ob5tw4Az3LFTn8LmPmU/rh6bCBdXWkkSxF91N6NYGnqJnG+DVn5Tvd7e0w=="
   passphrase: "YOUR_PASSPHRASE_HERE"
   
   # Wallet configuration

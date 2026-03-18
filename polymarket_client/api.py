@@ -119,9 +119,10 @@ class PolymarketClient(BasePolymarketClient):
     ):
         self.rest_url = rest_url.rstrip("/")
         self.ws_url = ws_url
-        self.gamma_url = gamma_url.rstrip("/")
+        self.gamma_url = gamma_url.rstrip("/") if gamma_url else ""
         self.api_key = api_key
         self.api_secret = api_secret
+        self.api_variant = api_variant.lower()
         self.passphrase = passphrase
         self.private_key = private_key
         self.timeout = timeout
@@ -228,6 +229,9 @@ class PolymarketClient(BasePolymarketClient):
         
         Uses pagination to get ALL active markets across all categories!
         """
+        if self.api_variant == "us":
+            return await self._list_markets_us(filters)
+
         try:
             params = filters.copy() if filters else {}
             params.setdefault("closed", "false")
